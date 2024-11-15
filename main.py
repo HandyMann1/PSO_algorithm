@@ -39,7 +39,7 @@ def generate_swarm(population, v_max, lower_bound, upper_bound):
     return swarm
 
 
-def PSO(swarm, iteration_num, personal_coef, social_coef, v_max, lower_bound, upper_bound, inertia,
+def PSO(swarm, iteration_num, personal_coef, social_coef, v_max_initial, lower_bound, upper_bound, inertia,
         modification_flag, iteration_number_hist):
     # x = np.linspace(lower_bound, upper_bound, 50)
     # y = np.linspace(lower_bound, upper_bound, 50)
@@ -54,7 +54,10 @@ def PSO(swarm, iteration_num, personal_coef, social_coef, v_max, lower_bound, up
         # ax = fig.add_subplot(1, 1, 1)
 
         for particle in swarm.particles:
-
+            if modification_flag:
+                v_max = v_max_initial * (1 - curr_iter / iteration_num)
+            else:
+                v_max = v_max_initial
             for i in range(0, 2):
                 r1 = np.random.uniform(0, 1)
                 r2 = np.random.uniform(0, 1)
@@ -62,20 +65,7 @@ def PSO(swarm, iteration_num, personal_coef, social_coef, v_max, lower_bound, up
                 personal_coefficient = personal_coef * r1 * (particle.best_pos[i] - particle.pos[i])
                 social_coefficient = social_coef * r2 * (swarm.best_pos[i] - particle.pos[i])
 
-                if modification_flag is True:
-                    if personal_coef + social_coef > 4.0:
-                        phi: float = personal_coef + social_coef
-                        constriction_factor: float = 2 / abs(2 - phi - math.sqrt(pow(phi, 2) - 4 * phi))
-                    else:
-                        constriction_factor = 0.729
-                else:
-                    constriction_factor = 1
-
-                new_velocity = constriction_factor * (
-                        inertia_weight * particle.velocity[i] +
-                        personal_coefficient +
-                        social_coefficient
-                )
+                new_velocity = inertia_weight * particle.velocity[i] + personal_coefficient + social_coefficient
 
                 particle.velocity[i] = np.clip(new_velocity, -v_max, v_max)
 
@@ -104,11 +94,18 @@ def PSO(swarm, iteration_num, personal_coef, social_coef, v_max, lower_bound, up
         curr_iter += 1
     return swarm
 
-#
-# population = 50
-# v_max = 15
-# iteration_num = 100
-# personal_coef = 2.05
-# social_coef = 2.05
-# swarm = Swarm(population, v_max, -10, 10)
-# swarm = PSO(swarm, iteration_num, personal_coef, social_coef, v_max, -10, 10, 0.3)
+
+population = 20
+v_max = 15
+iteration_num = 100
+personal_coef = 0.5
+social_coef = 0.3
+
+# best_solutions = []
+# for i in range(1000):
+#     swarm = Swarm(population, v_max, -10, 10)
+#     swarm = PSO(swarm, iteration_num, personal_coef, social_coef, v_max, -10, 10, 0.3,True,1)
+#     best_solutions.append(swarm.best_solution)
+# mean_best_solution = np.mean(best_solutions)
+# worst_best_solution = max(best_solutions)
+# print(f"mean solution: {mean_best_solution+12}, worst solution: {worst_best_solution+12}")

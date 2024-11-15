@@ -252,7 +252,7 @@ def open_selection_window():
     basic_modification_radio = ttk.Radiobutton(selection_window, text="Обычный роевой алгоритм",
                                                variable=modification_type,
                                                value=False)
-    cf_modification_radio = ttk.Radiobutton(selection_window, text="Роевой алгоритм с модификацией сжатия",
+    cf_modification_radio = ttk.Radiobutton(selection_window, text="Роевой алгоритм с модификацией скорости",
                                             variable=modification_type,
                                             value=True)
     basic_modification_radio.pack(pady=5)
